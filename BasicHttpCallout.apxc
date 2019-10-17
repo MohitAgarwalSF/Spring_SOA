@@ -1,0 +1,10 @@
+public class BasicHttpCallout {
+    public static void basic_HTTP(){
+        Http h = new Http();
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint('https://postman-echo.com/get?foo1=bar1&foo2=bar2');
+        req.setMethod('GET');
+        HttpResponse res = h.send(req);
+        System.debug('Result '+res.getBody());
+    }
+}
