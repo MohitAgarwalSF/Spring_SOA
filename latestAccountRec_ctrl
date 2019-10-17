@@ -1,6 +1,0 @@
-public class latestAccountRec_ctrl {
-    @AuraEnabled 
-    public static List<account> getAccount_list(){
-        return [select id,Name,Number_Of_Contact__c from account order By createdDate DESC limit 10];
-    }
-}
