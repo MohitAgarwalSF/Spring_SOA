@@ -1,0 +1,43 @@
+<aura:component controller="latestAccountRec_ctrl" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="acc_lst" type="Account[]"/>
+    <div class="slds-page-header">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                            <h1>
+                                <span class="slds-page-header__title slds-truncate" title="List of Account Records">List of Account Records</span>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+        <thead>
+            <tr class="slds-line-height_reset">
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Account Name">Account Name</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Number Of Contact">Number Of Contact</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.acc_lst}" var="a">
+                <tr class="slds-hint-parent">                
+                    <td data-label="Account Name">
+                        <div class="slds-truncate" title="{!a.Name}"><a href="{!'/'+a.Id}">{!a.Name}</a></div>
+                    </td>
+                    <td data-label="Number Of Contact">
+                        <div class="slds-truncate" title="{!a.Number_Of_Contact__c}">{!a.Number_Of_Contact__c}</div>
+                    </td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+</aura:component>
