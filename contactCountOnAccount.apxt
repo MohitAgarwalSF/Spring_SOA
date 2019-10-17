@@ -1,0 +1,48 @@
+trigger contactCountOnAccount on contact(after insert,after update,before delete,after undelete){
+    Set<String> accId_set = new Set<String>();
+	map<String,String> conIdvsAccId_Map = new map<String,String>();
+	if(Trigger.isInsert || Trigger.isUpdate){
+		for(Contact c : Trigger.new){
+            accId_set.add(c.AccountId);
+			conIdvsAccId_Map.put(c.Id,c.AccountId);
+		}
+	}
+     if(Trigger.isUpdate){
+		for(Contact c : Trigger.old){
+            accId_set.add(c.AccountId);
+			conIdvsAccId_Map.put(c.Id,c.AccountId);
+		}
+	}
+	if(Trigger.isUndelete || Trigger.isDelete){
+		for(Contact c : Trigger.isUndelete ?Trigger.new : Trigger.old){
+            accId_set.add(c.AccountId);
+			conIdvsAccId_Map.put(c.Id,c.AccountId);
+		}
+	}
+    map<String,Integer> accIdVsCount_map = new map<String,Integer>();
+    if(Trigger.isDelete){
+        for(String conID : conIdvsAccId_Map.keySet()){
+            if(accIdVsCount_map.containsKey(conIdvsAccId_Map.get(conID))){
+                accIdVsCount_map.put(conIdvsAccId_Map.get(conID),accIdVsCount_map.get(conID)+1);
+            }else{
+                accIdVsCount_map.put(conIdvsAccId_Map.get(conID),1);
+            }
+        }
+    }
+	List<account> acc_lst = new List<account>();
+	for(AggregateResult ar : [select AccountId, Count(id)countCon from contact where AccountID =: accId_set group by AccountId] ){
+		Account a = new Account();
+		a.id = (id)ar.get('AccountId');
+        if(Trigger.isDelete){
+         	a.Number_Of_Contact__c = (Decimal)ar.get('countCon')-(Decimal)accIdVsCount_map.get(a.id);   
+        }else{
+        	a.Number_Of_Contact__c = (Decimal)ar.get('countCon');    
+        }
+		acc_lst.add(a);
+	}
+	try{
+		update acc_lst;
+	}catch(Exception e){
+		System.debug('Exception '+e);
+	}
+}
